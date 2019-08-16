@@ -1,0 +1,76 @@
+\documentclass[]{article}
+
+%opening
+\title{The Context Computability Principle}
+\author{H\'ector J. V\'azquez Mart\'inez, Aleksej Fomins,\\
+	 Dr. Abhishek Banerjee, Prof. Fritjof Helmchen}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The context of a task is a function that maps the task space to a 3-dimensional surface of rewards (hills) and punishments (valleys).  At the time of writing, there is no flawless method to compute this function without predetermining a discrete number of contexts for a given task.  In order to approximate this function when an infinite number of contexts is available, it is necessary to leverage the reward prediction and fulfillment of expectation developed as a second layer to the basic task acquisition.  I have taken steps towards this end by taking the start of the art model of the Orbitofrontal Cortex (OFC) -- responsible for context switching in reversal learning, tactile discrimination tasks -- to the next level.  By doing so, I have identified computational constraints which I have summarised in the Context Computability Principle, and proposed an alternate approach to approximate the continuous context function.
+\end{abstract}
+
+
+\section{Vision}
+
+
+\subsection{Context is a surface map of the reward landscape.}
+You are a 16-bit pixelated character in a dungeon role-playing game.  After spending several hours on the 5th level of the dungeon, you know your way around the floor, have cleared all the enemies and claimed all the treasure.  By going deeper into the next level, you will find more treasure, but the enemies will also be stronger.
+
+You descend a set of dark stairs with a plan in mind: find the nearest treasure chest, pick up a sword and shield that will be able to defend you from the enemies of the dungeon's 6th level, and raid the rest of the floor.  You are quickly surprised as you exit the stairs: this level is pitch black, as opposed to the well lit fifth floor.  You do not yet have a map to this floor, so you always follow the wall to your left side, leaving the weak sword equipped on your right hand free to defend you from enemies.
+
+You are lucky enough to stumble upon a wooden chest before encountering any powerful enemies.  As you open it, you are extremely disappointed to only find a set of flint and steel inside.  Suddenly, you remember there was an excess of wooden sticks on the 5th floor after you defeated all the enemies.  You had decided to keep your weak sword as opposed to taking an even weaker potential torch.  This was a natural decision, given the circumstances; the priority was to be able to defend yourself immediately, not to light a fire in a level that was previously unknown to be dark.
+
+\subsection{Surprises paint the edges of the map.}
+
+Each surprise you encountered was a direct indication that the strategy learned on the previous level no longer applied to the status quo.  Having spent several hours in a single level, you were well aware of the entire landscape with respect to both the floor and the rewards and punishments that were to be found there.  The natural assumption was that the following floor would only be a slightly harder version of the current one.  Because of this assumption, each equipped item and strategy preserved its expected value until a large surprise let you know that you found yourself in an entirely different context.  This surprise also let you know, for example, that a weak wooden stick is much mightier than a sharp blade.  The surprise began to identify the valleys and hills of the new contextual landscape.
+
+\subsection{The Context Computability Principle.}
+In order to learn context dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Policy Level, The Expectation Level and The Context Level.  These constitute the basis of the Context Computability Principle.
+
+
+\section{Steps}
+
+\subsection{Mice demonstrate computational constraints.}
+
+\subsection{...}
+
+\subsection{...}
+
+\section{News}
+
+\subsection{A shallow neural network tackles the Policy Layer.}
+The mapping from input texture to lick or no lick can easily be implemented by a single layered neural network with some form of Hebbian plasticity on the final layer.
+
+\subsection{Reservoirs only capture 1 of the layers.}
+Irreproducibility of results.
+Lack of reservoir memory.
+
+\section{Future work}
+
+\subsection{Reservoir networks with dynamical memory.}
+1. Implement a reservoir network whose parameters allow a working memory through the dynamical activity of the network.
+2. Test this on the OFC paper.
+
+\subsection{One must be greedy to be on The Context Level.}
+1. Reservoir network with many inputs and only one output:
+Input: selected action, expectation, reward, a representation of the input
+Output: a scalar or vector representing the context function
+
+\subsection{Mice need to learn to stop licking.}
+1. Bona fide experimental paradigm: mice only receive a reward for correct hits and are punished for false alarms.  There is no feedback for withholding from licking.  This is a much harder problem to solve.
+2. Mice are dehydrated, they initially want to lick for water regardless of the texture.  The acquired behavior is actively refraining from licking.  Licking is the default behavior.
+
+\section{Contributions}
+1. The Context Computability Principle
+2. New approach to the continuous context problem
+3. State of the art to a new level
+4. Concrete research directions to explore
+
+\section{References}
+Zhang Z, Cheng Z, Lin Z, Nie C, Yang T (2018) A neural network model for the orbitofrontal cortex and task space acquisition during reinforcement learning. PLoS Comput Biol 14(1): e1005925. https://doi.org/10.1371/journal.pcbi.1005925
+
+\end{document}
