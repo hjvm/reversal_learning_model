@@ -6,6 +6,9 @@
 *.log
 *.toc
 
+# Mac OS GUI files.
+.DS_Store
+
 # PDF output - usually a bad idea to keep this in Git
 *.pdf
 

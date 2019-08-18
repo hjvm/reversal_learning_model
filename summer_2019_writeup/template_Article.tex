@@ -10,14 +10,14 @@
 \maketitle
 
 \begin{abstract}
-The context of a task is a function that maps the task space to a 3-dimensional surface of rewards (hills) and punishments (valleys).  At the time of writing, there is no flawless method to compute this function without predetermining a discrete number of contexts for a given task.  In order to approximate this function when an infinite number of contexts is available, it is necessary to leverage the reward prediction and fulfillment of expectation developed as a second layer to the basic task acquisition.  I have taken steps towards this end by taking the start of the art model of the Orbitofrontal Cortex (OFC) -- responsible for context switching in reversal learning, tactile discrimination tasks -- to the next level.  By doing so, I have identified computational constraints which I have summarised in the Context Computability Principle, and proposed an alternate approach to approximate the continuous context function.
+The context of a task is a function that maps the task space to a 3-dimensional surface of rewards (hills) and punishments (valleys).  At the time of writing, there is no flawless method to compute this function without predetermining a discrete number of contexts for a given task.  In order to approximate this function when the number of potential contexts is unknown, it is necessary to leverage reward prediction errors and fulfillment of expectation developed as a second layer to the basic task acquisition.  I have taken steps towards this end by identifying the computational constraints behind the calculation of context functions, summarized as the Context Computability Principle, and proposing a theoretical framework to detect changes in context.  I have grounded this approach by taking the state of the art reservoir model of the Orbitofrontal Cortex (OFC) -- responsible for context switching in reversal learning, tactile discrimination tasks -- and explaining its current deficiencies through the Context Computability Principle.  Finally, I have proposed multiple in-depth research directions that will fully confirm this principle and provide a novel approach to the learning of context-dependent policies in an unknown task space.
 \end{abstract}
 
 
 \section{Vision}
+In order to learn context-dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Reaction Level, The Expectation Level and The Evaluation Level.  These constitute the basis of the Context Computability Principle.  By the end of this article, you will have an in depth understanding of what each of these levels is, the computational and biological constraints positing them, their interactions and how this framework can be applied to reinforcement learning.
 
-
-\subsection{Context is a surface map of the reward landscape.}
+\subsection{Context provides a surface map of the reward landscape.}
 You are a 16-bit pixelated character in a dungeon role-playing game.  After spending several hours on the 5th level of the dungeon, you know your way around the floor, have cleared all the enemies and claimed all the treasure.  By going deeper into the next level, you will find more treasure, but the enemies will also be stronger.
 
 You descend a set of dark stairs with a plan in mind: find the nearest treasure chest, pick up a sword and shield that will be able to defend you from the enemies of the dungeon's 6th level, and raid the rest of the floor.  You are quickly surprised as you exit the stairs: this level is pitch black, as opposed to the well lit fifth floor.  You do not yet have a map to this floor, so you always follow the wall to your left side, leaving the weak sword equipped on your right hand free to defend you from enemies.
@@ -29,7 +29,8 @@ You are lucky enough to stumble upon a wooden chest before encountering any powe
 Each surprise you encountered was a direct indication that the strategy learned on the previous level no longer applied to the status quo.  Having spent several hours in a single level, you were well aware of the entire landscape with respect to both the floor and the rewards and punishments that were to be found there.  The natural assumption was that the following floor would only be a slightly harder version of the current one.  Because of this assumption, each equipped item and strategy preserved its expected value until a large surprise let you know that you found yourself in an entirely different context.  This surprise also let you know, for example, that a weak wooden stick is much mightier than a sharp blade.  The surprise began to identify the valleys and hills of the new contextual landscape.
 
 \subsection{The Context Computability Principle.}
-In order to learn context dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Policy Level, The Expectation Level and The Context Level.  These constitute the basis of the Context Computability Principle.
+
+(F. Helmchen et. al., 2018)
 
 
 \section{Steps}
@@ -70,7 +71,8 @@ Output: a scalar or vector representing the context function
 3. State of the art to a new level
 4. Concrete research directions to explore
 
-\section{References}
-Zhang Z, Cheng Z, Lin Z, Nie C, Yang T (2018) A neural network model for the orbitofrontal cortex and task space acquisition during reinforcement learning. PLoS Comput Biol 14(1): e1005925. https://doi.org/10.1371/journal.pcbi.1005925
+
+\newpage
+
 
 \end{document}
