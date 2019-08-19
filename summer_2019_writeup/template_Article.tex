@@ -15,7 +15,7 @@ The context of a task is a function that maps the task space to a 3-dimensional 
 
 
 \section{Vision}
-In order to learn context-dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Reaction Level, The Expectation Level and The Evaluation Level.  These constitute the basis of the Context Computability Principle.  By the end of this article, you will have an in depth understanding of what each of these levels is, the computational and biological constraints positing them, their interactions and how this framework can be applied to reinforcement learning.
+In order to learn context-dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  These constitute the basis of the Context Computability Hierarchy.  By the end of this article, you will have an in depth understanding of what each of these levels is, the computational and biological constraints positing them, their interactions and how this framework can be applied to reinforcement learning.
 
 \subsection{Context provides a surface map of the reward landscape.}
 You are a 16-bit pixelated character in a dungeon role-playing game.  After spending several hours on the 5th level of the dungeon, you know your way around the floor, have cleared all the enemies and claimed all the treasure.  By going deeper into the next level, you will find more treasure, but the enemies will also be stronger.
@@ -28,14 +28,21 @@ You are lucky enough to stumble upon a wooden chest before encountering any powe
 
 Each surprise you encountered was a direct indication that the strategy learned on the previous level no longer applied to the status quo.  Having spent several hours in a single level, you were well aware of the entire landscape with respect to both the floor and the rewards and punishments that were to be found there.  The natural assumption was that the following floor would only be a slightly harder version of the current one.  Because of this assumption, each equipped item and strategy preserved its expected value until a large surprise let you know that you found yourself in an entirely different context.  This surprise also let you know, for example, that a weak wooden stick is much mightier than a sharp blade.  The surprise began to identify the valleys and hills of the new contextual landscape.
 
-\subsection{The Context Computability Principle.}
+\subsection{Mice demonstrate computational constraints.}
 
-(F. Helmchen et. al., 2018)
+The tactile discrimination experiment consists of stochastically presenting 2 different types of sandpaper (P100 and P1200) to head-restrained mice.  These must, in turn, use their whiskers to explore and learn to recognize each of these textures individually.  One of the two textures is positively rewarded, while the other one is punished.  Mice are administered this reward or punishment when they lick a water spout upon presentation of the corresponding texture; which is considered active selection.  On the other hand, when mice withhold from licking, they reject the presented texture, but do not receive any sort of feedback from the experimental setup.  Once mice achieve a near perfect performance, the contingency of positively- and negatively-rewarded texture is flipped, starting the reversal learning portion of the experiment.
+
+It has been shown through the tactile discrimination experiment, that mice store representations of touching, whisking and licking in different neocortical regions.  The most prominent of these cortico-cortico interactions is between the primary (S1) and secondary (S2) somatosensory areas and the vibrissae motor cortex (M1) (F. Helmchen et. al, 2018).  Mice who have been afflicted with lesions to the orbitorfrontal cortex exhibit very similar performance to healthy mice in the initial learning phase of the experiment.  These three regions therefore seem necessary and sufficient for the basic initial learning of the tactile discrimination task, supporting the Reaction Level of the Context Hierarchy.
+
+The remaining two levels are managed by a distributed computation of positive and negative reward values and their stabilization in the form of expectation.  The Evaluation Level is where the positive and negative feedback of the Reaction Level is processed.  This level is composed of two neural circuits: the projections from the OFC to the Nucleus Accumbens, which evaluate negative outcomes, and the Amygdala's projections to the OFC, which evaluate positive outcomes.  Finally, the circuit from the OFC to the Amygdala stabilizes the learned action values from the other two circuits (SM Groman, et. at, 2019).  This is the function of the Expectation Layer and its interaction with the Evaluation Layer.
+
+It was previously thought that the OFC was mostly responsible for faster learning in the reversal phase of the tactile discrimination task by computing reward prediction errors; however, It has been demonstrated that neurons in the OFC signal reward prediction, not reward prediction errors (Stalnaker, et. al, 2018).  The reward prediction error is the main cause of faster learning after the contingencies of the textures have been reversed.  Groman et. al's circuit characterization of the OFC's role and the Context Hierarchy both set a limit on the computations that are required of the OFC.
 
 
 \section{Steps}
 
 \subsection{Mice demonstrate computational constraints.}
+
 
 \subsection{...}
 
@@ -71,8 +78,14 @@ Output: a scalar or vector representing the context function
 3. State of the art to a new level
 4. Concrete research directions to explore
 
+\section{References}
 
-\newpage
+Groman, S. M., Keistler, C., Keip, A. J., Hammarlund, E., DiLeone, R. J., Pittenger, C., ... \& Taylor, J. R. (2019). Orbitofrontal Circuits Control Multiple Reinforcement-Learning Processes. Neuron.
+
+Helmchen, F., Gilad, A., \& Chen, J. L. (2018). Neocortical dynamics during whisker-based sensory discrimination in head-restrained mice. Neuroscience, 368, 57-69.
+
+Zhang, Z., Cheng, Z., Lin, Z., Nie, C., \& Yang, T. (2018). A neural network model for the orbitofrontal cortex and task space acquisition during reinforcement learning. PLoS computational biology, 14(1), e1005925.
+
 
 
 \end{document}
