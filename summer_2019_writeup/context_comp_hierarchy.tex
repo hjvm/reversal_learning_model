@@ -10,23 +10,12 @@
 \maketitle
 
 \begin{abstract}
-The context of a task is a function that maps the task space to a 3-dimensional surface of rewards (hills) and punishments (valleys).  At the time of writing, there is no flawless method to compute this function without predetermining a discrete number of contexts for a given task.  In order to approximate this function when the number of potential contexts is unknown, it is necessary to leverage reward prediction errors and fulfillment of expectation developed as a third layer to the basic task acquisition.  I have taken steps towards this end by identifying the computational constraints behind the calculation of context functions, summarized as the Context Computability Hierarchy, and proposing a theoretical framework to detect changes in context.  I have grounded this approach by taking the state of the art reservoir model of the Orbitofrontal Cortex (OFC) -- responsible for context switching in reversal learning, tactile discrimination tasks -- and explaining its current deficiencies through the Context Computability Principle.  Finally, I propose multiple in-depth research directions that will fully confirm this principle and provide a novel approach to the learning of context-dependent policies in an unknown task space.
+The context of a task is a function that maps the task space to a 3-dimensional surface of rewards (hills) and punishments (valleys).  At the time of writing, there is no flawless method to compute this function without predetermining a discrete number of contexts for a given task.  In order to approximate this function when the number of potential contexts is unknown, it is necessary to leverage reward prediction errors and fulfillment of expectation developed as a third layer to the basic task acquisition.  I have taken steps towards this end by identifying the computational constraints behind the calculation of context functions, summarized as the Context Computability Hierarchy, and proposing a theoretical framework to detect changes in context.  I have grounded this approach by taking the state of the art reservoir model of the Orbitofrontal Cortex (OFC) -- responsible for context switching in reversal learning, tactile discrimination tasks -- and explaining its current deficiencies through the Context Computability Hierarchy.  Finally, I propose multiple in-depth research directions that will fully confirm this principle and provide a novel approach to the learning of context-dependent policies in an unknown task space.
 \end{abstract}
 
 
 \section{Vision}
-In order to learn context-dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  These constitute the basis of the Context Computability Hierarchy.  By the end of this article, you will have an in depth understanding of what each of these levels is, the computational and biological constraints positing them, their interactions and how this framework can be applied to reinforcement learning.
-
-\subsection{Context provides a surface map of the reward landscape.}
-You are a 16-bit pixelated character in a dungeon role-playing game.  After spending several hours on the 5th level of the dungeon, you know your way around the floor, have cleared all the enemies and claimed all the treasure.  By going deeper into the next level, you will find more treasure, but the enemies will also be stronger.
-
-You descend a set of dark stairs with a plan in mind: find the nearest treasure chest, pick up a sword and shield that will be able to defend you from the enemies of the dungeon's 6th level, and raid the rest of the floor.  You are quickly surprised as you exit the stairs: this level is pitch black, as opposed to the well lit fifth floor.  You do not yet have a map to this floor, so you always follow the wall to your left side, leaving the weak sword equipped on your right hand free to defend you from enemies.
-
-You are lucky enough to stumble upon a wooden chest before encountering any powerful enemies.  As you open it, you are extremely disappointed to only find a set of flint and steel inside.  Suddenly, you remember there was an excess of wooden sticks on the 5th floor after you defeated all the enemies.  You had decided to keep your weak sword as opposed to taking an even weaker potential torch.  This was a natural decision, given the circumstances; the priority was to be able to defend yourself immediately, not to light a fire in a level that was previously unknown to be dark.
-
-\subsection{Surprises paint the edges of the map.}
-
-Each surprise you encountered was a direct indication that the strategy learned on the previous level no longer applied to the status quo.  Having spent several hours in a single level, you were well aware of the entire landscape with respect to both the floor and the rewards and punishments that were to be found there.  The natural assumption was that the following floor would only be a slightly harder version of the current one.  Because of this assumption, each equipped item and strategy preserved its expected value until a large surprise let you know that you found yourself in an entirely different context.  This surprise also let you know, for example, that a weak wooden stick is much mightier than a sharp blade.  The surprise began to identify the valleys and hills of the new contextual landscape.
+In order to learn context-dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  These constitute the basis of the Context Computability Hierarchy.  By the end of this paper, you will have an in depth understanding of what each of these levels is, the computational and biological constraints positing them, their interactions and how this framework can be applied to reinforcement learning.
 
 \subsection{Mice demonstrate computational constraints.}
 
@@ -76,41 +65,58 @@ At the time of writing, the most recent publication attempting to model the mice
 
 According to their findings, the reservoir network was able to learn the initial contingency, but upon reversal would first need time to forget the first learned set of weights in the output layer, making the reversal learning phase slower.  It was not until they included the reward from the previous trial into the input of the reservoir that they were able to achieve a faster reversal learning phase.  Moreover, each subsequent reversal of the texture-reward contingency was learned even faster than the previous one.  Much like the mice, they argued, the reservoir network model learned an initial task structure and later became adept at simply switching the contingency without forgetting the previously learned rewarded rule.
 
-\subsection{An incomplete mix of the 3 levels}
+\subsection{The model does not capture the 3 levels.}
 According to the paper published by Zhang et. al, the output of the model is calculated by taking a softmax of both output nodes connected to the reservoir.  The probabilities obtained from this function are then considered the expected rewards $E[r_k]$ of each function.  The plasticity equation  then uses this term in a TD-style term: $(r - E[r_k]))$.  It is not mentioned how the reservoir is able to reverse the learned contingency, aside from it being computed abstractly in the temporal dynamics of the pooled neurons.
 
-I have implemented the network they described in their paper in iPython notebooks (provided in the Supplementary Materials) using all the provided hyperparameters and an identical trial structure as prescribed.  I have not yet been able to replicate the results presented in the paper.  Instead, I have found that including the reward from the previous trial hinders learning, making it slower.  Reversals are also slower than the initial learning, both with and without the old reward input, and the model has a tendency to become trapped in local maxima or minima.
+I have implemented the network as described in their paper in iPython notebooks (see Supplementary Materials) using all the provided hyperparameters and an identical trial structure.  I have not yet been able to replicate the results presented in the paper.  Instead, I have discovered the following behaviors:
+- Inclusion of the reward from the previous trial hinders learning.  Without knowing the action associated to a previous reward, including it as an input does not offer any further information regarding the task structure, and only serves to make the input noisier.
+- Reversals are slower than the initial learning, both with and without the old reward input.  Because the weights are normalized upon initialization and with every update, the initial weights do not cause the initial learning to be any slower than later reversals.  The model is actively forgetting the previous set of weights and learning a new one.
 
-\subsection{The experimental paradigm is a much harder problem.}
-One crucial difference between the reservoir model, as well as other models of the tactile discrimination experiment, and the true experiment with head-restrained mice is the type of feedback the models receive.  Generally, the mice's choice between licking/go and not licking/no-go is modeled as two output nodes, much as described in the reservoir paper.  Whenever the model produces the correct output, it is rewarded in order to strengthen the weights that produced this output.  
-
-The main issue lies in the fact that mice do not receive feedback for one out of the two correct outputs: when they correctly reject a texture, there is no water administered as a reward.  Mice must then learn from either the rewarded correct selections or from the punished incorrect selections.  In other words, only one output yields information about the task space, while the other one provides no information whatsoever.  This is a much harder problem to learn, one that is frequently overlooked in such models.
-
+Without explicitly separating the learning task into the discrete functions proposed by the Context Computability Hierarchy, it is impossible to achieve the context switching observed to cause reversal learning to be much faster than the initial phase.
 
 \subsection{The reservoir does not behave like a reservoir.}
-Irreproducibility of results.
-Lack of reservoir memory.
+A closer inspection into the irreproducibility of the paper's results revealed that the reservoir, as described by Zhang, et. al, did not benefit from any of the recursive temporal dynamics that are attributed to this particular architecture's success.  The decay in response of the neurons in the reservoir layer is characterized by $\frac{x_0}{e}$ every 100ms ($\tau=0.1, dt=0.001$).  Because the decision and reward are applied 200ms after the removal of the input texture in the experimental setup, the original input signal has only decayed by a factor of $\frac{x_0}{e^2}$ by the time the weight update occurs.  This decay is slow enough for a trace of the input to still be present in the reservoir's neurons and for the feedback dynamics to remain negligible.  Consequently, the behavior exhibited by the reservoir neural network described in the paper is that of a simple, one layer neural network learning a set of weights from input to output (See Supplementary Notes).
+
+
 
 \section{Future work}
+After detailing the Context Computability Hierarchy and my current work grounding this framework, I will now highlight several key research directions and projects that must be followed in order to fully prove the effectiveness of this approach to solving the context-dependent learning problem.  Some of them I have already started and are either included as supplementary materials to this paper or are available upon request.
+
+\subsection{Why does the original code work?}
+The findings that I have reported in this paper have all been made through my own codebase.  Even though it is based on the Zhang, et. al paper, it does not fully explain why they were able to achieve faster reversal learning results, especially conditioned on providing the reservoir model with the reward information from the previous trial.
+
+In order to fully explain the discrepancies, it will be necessary to inspect their codebase in depth and compare it to the published material.  I have provided one such example of this type of investigation: the current learning rule published in the paper causes my model in python to learn a set of weights opposite to the contingency, driving its accuracy to zero directly.  After searching for the learning and output rules implemented in the code, I found that the output equation published in the paper is different from the one used in the code itself.
+
+The final concrete direction such a project can follow is to replicate the results I have observed in my python code with their MATLAB codebase.  The code that was provided by the authors does not run; however, I have forked their repository and have been updating it to run on most computers and MATLAB versions.  At the time of writing, this is still a work in progress; my repository is available upon request regardless.
 
 \subsection{Reservoir networks with dynamical memory.}
-1. Implement a reservoir network whose parameters allow a working memory through the dynamical activity of the network.
-2. Test this on the OFC paper.
+As mentioned in *The reservoir does not behave like a reservoir*, the hyperparamters proposed by Zhang et. al fail to elicit the reservoir computing dynamics from the model.  I have implemented a simpler, single layer neural network using a similar hyperparametrization and update equation to demonstrate that the underlying behavior of a reservoir is that of a Reaction Level model (See Supplementary Materials).
 
-\subsection{One must be greedy to be on The Context Level.}
-1. Reservoir network with many inputs and only one output:
-Input: selected action, expectation, reward, a representation of the input
-Output: a scalar or vector representing the context function
+It is now necessary to mathematically derive and implement a reservoir neural network with parameters that allow it to have a working memory through the dynamical activity of the network instead of the individual neuronal activations themselves.  Ideally, these parameters should be as similar to the original as possible.  The model should then be tested in the same experimental setup in order to observe changes in performance from the baseline.
+
+\subsection{One must be greedy to be on The Expectation Level.}
+The currently published experimental setup attempts to mix all levels of the Context Computability Hierarchy.  After finding a full set of parameters to make use of the recursive dynamics of the reservoir, it will be necessary to separate the model into a more traditional Actor-Critic setup by splitting the Reaction Level from the Evaluation and Expectation Level.
+
+In order to achieve this split, it will suffice to implement a simple neural network for the Reaction Level as I have (See Supplementary Materials).  But to fully mix the Evaluation and Expectation level, it will be necessary to provide the reservoir with a full account of what the Reaction Level has produced, as well as the original input, the reward received and the expectation developed by the model.  I suspect this may improve the initial learning, but will not provide the fast context switch seen in the reversal phase until the model is further separated into the corresponding 3 levels.  This would be yet another step further.
 
 \subsection{Mice need to learn to stop licking.}
 1. Bona fide experimental paradigm: mice only receive a reward for correct hits and are punished for false alarms.  There is no feedback for withholding from licking.  This is a much harder problem to solve.
 2. Mice are dehydrated, they initially want to lick for water regardless of the texture.  The acquired behavior is actively refraining from licking.  Licking is the default behavior.
 
+One crucial difference between the reservoir model, as well as other models of the tactile discrimination experiment, and the true experiment with head-restrained mice is the type of feedback the models receive.  Generally, the mice's choice between licking/go and not licking/no-go is modeled as two output nodes, much as described in the reservoir paper.  Whenever the model produces the correct output, it is rewarded in order to strengthen the weights that produced this output.  
+
+The main issue lies in the fact that mice do not receive feedback for one out of the two correct outputs: when they correctly reject a texture, there is no water administered as a reward.  Mice must then learn from either the rewarded correct selections or from the punished incorrect selections.  Which means only one output yields information about the task space, while the other one provides no information whatsoever.  This is a much harder problem to learn, one that is frequently overlooked in such models.
+
+The second divergence is in the interpretation of the mouse's initial go/no-go behavior.  Generally, neural networks are initialized with a random set of weights, which should be equally likely to produce either go or no-go.  However, mice in these experiments are dehydrated, and their initial, naive behavior is to always lick in search of water.  In reality, the default behavior is to go, and then the no-go response must afterwards be learned.  This could be more accurately interpreted as a neural network with only a single output: whenever this output reaches a threshold, the model has chosen to go; otherwise, it has actively rejected the input.  I have also begun this exploration and included it in the Supplementary Materials.
+
 \section{Contributions}
-1. The Context Computability Principle
-2. New approach to the continuous context problem
-3. State of the art to a new level
-4. Concrete research directions to explore
+In this paper, I have outlined the Context Computability Hierarchy in light of the biological constraints discovered through the tactile-discrimination task performed on rodents.  I have also compared it to current Actor-Critic approaches to this Reinforcement Learning problem and highlighted its advantages.  I have thus proposed a new approach to the context-dependent learning problem when the number of contexts is unknown beforehand.
+
+With my current work, I have uncovered the limitations of the state of the art in reversal learning models  I have also provided multiple concrete research projects and the necessary codebases in order to further affirm the Context Computability Hierarchy and fully take the state of the art to the next level.
+
+Now as you finish this article, you understand the theoretical basis of the Context Computability Hierarchy, its divergence from traditional Actor-Critic approaches and are empowered, with this understanding and provided code, to continue this research and produce seminal contributions to our computational account of biological learning.
+
+\newpage
 
 \section{References}
 
@@ -125,3 +131,7 @@ Zhang, Z., Cheng, Z., Lin, Z., Nie, C., \& Yang, T. (2018). A neural network mod
 
 
 \end{document}
+
+\include{./supp_materials/supplementary1/ofc_reservoir_paper_reimplementation}
+\include{./supp_materials/supplementary2/single_layer_feedforward_network}
+\include{./supp_materials/supplementary3/reservoir_network_go_nogo}
