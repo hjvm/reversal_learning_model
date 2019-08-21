@@ -1,7 +1,7 @@
 \documentclass[]{article}
 
 %opening
-\title{The Context Computability Principle}
+\title{The Context Computability Hierarchy}
 \author{H\'ector J. V\'azquez Mart\'inez, Aleksej Fomins,\\
 	 Dr. Abhishek Banerjee, Prof. Fritjof Helmchen}
 
@@ -10,7 +10,7 @@
 \maketitle
 
 \begin{abstract}
-The context of a task is a function that maps the task space to a 3-dimensional surface of rewards (hills) and punishments (valleys).  At the time of writing, there is no flawless method to compute this function without predetermining a discrete number of contexts for a given task.  In order to approximate this function when the number of potential contexts is unknown, it is necessary to leverage reward prediction errors and fulfillment of expectation developed as a second layer to the basic task acquisition.  I have taken steps towards this end by identifying the computational constraints behind the calculation of context functions, summarized as the Context Computability Principle, and proposing a theoretical framework to detect changes in context.  I have grounded this approach by taking the state of the art reservoir model of the Orbitofrontal Cortex (OFC) -- responsible for context switching in reversal learning, tactile discrimination tasks -- and explaining its current deficiencies through the Context Computability Principle.  Finally, I have proposed multiple in-depth research directions that will fully confirm this principle and provide a novel approach to the learning of context-dependent policies in an unknown task space.
+The context of a task is a function that maps the task space to a 3-dimensional surface of rewards (hills) and punishments (valleys).  At the time of writing, there is no flawless method to compute this function without predetermining a discrete number of contexts for a given task.  In order to approximate this function when the number of potential contexts is unknown, it is necessary to leverage reward prediction errors and fulfillment of expectation developed as a third layer to the basic task acquisition.  I have taken steps towards this end by identifying the computational constraints behind the calculation of context functions, summarized as the Context Computability Hierarchy, and proposing a theoretical framework to detect changes in context.  I have grounded this approach by taking the state of the art reservoir model of the Orbitofrontal Cortex (OFC) -- responsible for context switching in reversal learning, tactile discrimination tasks -- and explaining its current deficiencies through the Context Computability Principle.  Finally, I propose multiple in-depth research directions that will fully confirm this principle and provide a novel approach to the learning of context-dependent policies in an unknown task space.
 \end{abstract}
 
 
@@ -30,9 +30,9 @@ Each surprise you encountered was a direct indication that the strategy learned 
 
 \subsection{Mice demonstrate computational constraints.}
 
-The tactile discrimination experiment consists of stochastically presenting 2 different types of sandpaper (P100 and P1200) to head-restrained mice.  These must, in turn, use their whiskers to explore and learn to recognize each of these textures individually.  One of the two textures is positively rewarded, while the other one is punished.  Mice are administered this reward or punishment when they lick a water spout upon presentation of the corresponding texture; which is considered active selection.  On the other hand, when mice withhold from licking, they reject the presented texture, but do not receive any sort of feedback from the experimental setup.  Once mice achieve a near perfect performance, the contingency of positively- and negatively-rewarded texture is flipped, starting the reversal learning portion of the experiment.
+The tactile discrimination experiment consists of stochastically presenting 2 different types of sandpaper (P100 and P1200) to head-restrained mice.  These must, in turn, use their whiskers to explore and learn to recognize each of these textures individually.  One of the two textures is positively rewarded, while the other one is punished.  Mice are administered this reward or punishment when they lick a water spout upon presentation of the corresponding texture; which is considered active selection.  On the other hand, when mice withhold from licking, they reject the presented texture, but do not receive any sort of feedback from the experimental setup.  Once mice achieve a near perfect performance, the contingency of positively- and negatively-rewarded textures is flipped, starting the reversal learning portion of the experiment.
 
-It has been shown through the tactile discrimination experiment, that mice store representations of touching, whisking and licking in different neocortical regions.  The most prominent of these cortico-cortico interactions is between the primary (S1) and secondary (S2) somatosensory areas and the vibrissae motor cortex (M1) (F. Helmchen et. al, 2018).  Mice who have been afflicted with lesions to the orbitorfrontal cortex exhibit very similar performance to healthy mice in the initial learning phase of the experiment.  These three regions therefore seem necessary and sufficient for the basic initial learning of the tactile discrimination task, supporting the Reaction Level of the Context Hierarchy.
+It has been shown through the tactile discrimination experiment that mice store representations of touching, whisking and licking in different neocortical regions.  The most prominent of these cortico-cortico interactions is between the primary (S1) and secondary (S2) somatosensory areas and the vibrissae motor cortex (M1) (F. Helmchen et. al, 2018).  Mice who have been afflicted with lesions to the orbitorfrontal cortex exhibit very similar performance to healthy mice in the initial learning phase of the experiment.  These three regions therefore seem necessary and sufficient for the basic initial learning of the tactile discrimination task, supporting the Reaction Level of the Context Hierarchy.
 
 The remaining two levels are managed by a distributed computation of positive and negative reward values and their stabilization in the form of expectation.  The Evaluation Level is where the positive and negative feedback of the Reaction Level is processed.  This level is composed of two neural circuits: the projections from the OFC to the Nucleus Accumbens, which evaluate negative outcomes, and the Amygdala's projections to the OFC, which evaluate positive outcomes.  Finally, the circuit from the OFC to the Amygdala stabilizes the learned action values from the other two circuits (SM Groman, et. at, 2019).  This is the function of the Expectation Layer and its interaction with the Evaluation Layer.
 
@@ -40,20 +40,54 @@ It was previously thought that the OFC was mostly responsible for faster learnin
 
 
 \section{Steps}
+I will now explicitly define the Context Computability Hierarchy as currently illustrated by its biological constraints and address its overlap with current Actor-Critic methods in Reinforcement Learning.
 
-\subsection{Mice demonstrate computational constraints.}
+\subsection{The Context Computability Hierarchy.}
+The Context Computability Hierarchy consist of 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  Here, I describe a clearer picture of what each level entails, as well as its interactions with the other 2 levels.
 
+\subsubsection{The Reaction Level}
+The Reaction Level encompasses the direct input to output mapping.  Its simplest description is a rudimentary set of weights that map a given input to a specific output.  When no learning has occurred, this mapping can be entirely random, however, upon receiving positive and negative signals from the Evaluation Level $y_{true}$, the weights connecting the input directly to the produced output will either be strengthened or weakened according to the feedback.
 
-\subsection{...}
+The Reaction Level interacts with the higher 2 levels by providing the input and output pair that was determined for any given iteration.
 
-\subsection{...}
+\subsubsection{The Evaluation Level}
+The Evaluation Level is responsible for handling the administered rewards and punishments.  In this layer, the reward or punishment signal is received, as well as the input and chosen action pair $(I, A)$ from the Reaction Level.  According to a certain learning rate, the input-output pairs provided by the Reaction Level will slowly build either a positive or negative value according to the task at hand.
+
+A common issue is that such feedback signals are typically not a binary 1 or -1, but instead span a continuous spectrum which varies by how much reward or punishment was administered, how strong it was and how much it was needed or desired.  For example, a dehydrated mouse in the tactile discrimination experiment will highly value any water droplets administered as reward through the water spout when it chooses the right texture.  Typically, such a reward is modeled as $r = 1$.  In contrast, an unpleasant sound played when the mouse chooses the incorrect texture will equate either $r = 0$ or $r = -1$ in most current weight update equations.  It is incorrect to equate the magnitude of both when updating weights, even when the learning rates for positive and negative updates are different, because much needed water and an unpleasant sound are fundamentally perceived very differently.
+
+The Evaluation Level allows the abstraction of this entire spectrum away from the hierarchy by providing only binary feedback signals $y_true$ to the other levels.  This means the Reaction Level is not concerned with reward, and only concerned with the correct input to output mapping.  The Evaluation level provides, in addition, the predicted reward $R_{pred}$ to the Expectation Level, which is the value currently assigned to the most recently seen input-output pair $(I, A)$.
+
+\subsubsection{The Expectation Level}
+The Expectation Level then receives a function mapping input-output pairs to a predicted reward value $f(I, A) = R_{pred}$, as well as the feedback signal $y_{true}$ which would indicate whether the predicted value is correct or not.  The function $f(-)$ received by the Expectation Layer creates a 3-dimensional surface plot of input-action combinations and their associated values, while the $y_{true}$ signal indicates whether the current surface map is an accurate description of the task space.
+
+A change of context would be interpreted as a rotation of the input-output axes over which the $f(-)$ function is defined. 
+
+\subsection{The three levels are more specific than Actor-Critic architectures.}
+
+The typical Actor-Critic architecture in Reinforcement Learning is composed of an Actor which is mainly defined as the Reaction Level, and a Critic which encompasses the functions of the Evaluation and Expectation Level.  In traditional Actor-Critic architectures that rely on a probability distribution, usually as a softmax, as an intentioned choice model, the probability for each potential output is taken as the expectation $E[r]$ of the model.  The Critic then performs some variation of Temporal Displacement (TD) learning in the weight update rule with an $(r - E[r]])$ term.  
+
+The Context Computability Hierarchy separates the computation of expectation from that of the final output action.  Instead, the expectation is handled in the Evaluation Layer as a progressive accumulation of the full reward information according to a certain discount factor, while the probabilistic precursor to action selection in the Reaction Level is considered the confidence behind the action.  Having a weight plasticity rule that takes into account this confidence $c$ such as $(y_{true} - c)$ would allow the learning to saturate and control the magnitude of the input-output weights without the need to normalize them.
 
 \section{News}
+I will now discuss my progress to date with the current state of the art model of the Orbitofrontal Cortex (OFC) (Zhang, et. al, 2018).  I will compare my own findings and discuss limitations in light of the Context Computability Hierarchy.
 
-\subsection{A shallow neural network tackles the Policy Layer.}
-The mapping from input texture to lick or no lick can easily be implemented by a single layered neural network with some form of Hebbian plasticity on the final layer.
+\subsection{The OFC as the sole driver of reversal learning.}
+At the time of writing, the most recent publication attempting to model the mice tactile discrimination reversal learning task was by Zhang, et. al, who presented a reservoir neural network model of the OFC.  In their paper, they described a reservoir which received as input a texture represented by a 2-dimensional binary vector, and a binary reward variable which represented the reward earned in the previous trial.  The network output consisted of two nodes, representing two possible actions.  In each trial, one of the two nodes would be selected and set to 1, while the other was set to 0.  This represented the choice between licking and not licking, or go vs. no-go.  The only plastic weights in the entire network were the output weights, which constitute a linear readout of the output of the reservoir.
 
-\subsection{Reservoirs only capture 1 of the layers.}
+According to their findings, the reservoir network was able to learn the initial contingency, but upon reversal would first need time to forget the first learned set of weights in the output layer, making the reversal learning phase slower.  It was not until they included the reward from the previous trial into the input of the reservoir that they were able to achieve a faster reversal learning phase.  Moreover, each subsequent reversal of the texture-reward contingency was learned even faster than the previous one.  Much like the mice, they argued, the reservoir network model learned an initial task structure and later became adept at simply switching the contingency without forgetting the previously learned rewarded rule.
+
+\subsection{An incomplete mix of the 3 levels}
+According to the paper published by Zhang et. al, the output of the model is calculated by taking a softmax of both output nodes connected to the reservoir.  The probabilities obtained from this function are then considered the expected rewards $E[r_k]$ of each function.  The plasticity equation  then uses this term in a TD-style term: $(r - E[r_k]))$.  It is not mentioned how the reservoir is able to reverse the learned contingency, aside from it being computed abstractly in the temporal dynamics of the pooled neurons.
+
+I have implemented the network they described in their paper in iPython notebooks (provided in the Supplementary Materials) using all the provided hyperparameters and an identical trial structure as prescribed.  I have not yet been able to replicate the results presented in the paper.  Instead, I have found that including the reward from the previous trial hinders learning, making it slower.  Reversals are also slower than the initial learning, both with and without the old reward input, and the model has a tendency to become trapped in local maxima or minima.
+
+\subsection{The experimental paradigm is a much harder problem.}
+One crucial difference between the reservoir model, as well as other models of the tactile discrimination experiment, and the true experiment with head-restrained mice is the type of feedback the models receive.  Generally, the mice's choice between licking/go and not licking/no-go is modeled as two output nodes, much as described in the reservoir paper.  Whenever the model produces the correct output, it is rewarded in order to strengthen the weights that produced this output.  
+
+The main issue lies in the fact that mice do not receive feedback for one out of the two correct outputs: when they correctly reject a texture, there is no water administered as a reward.  Mice must then learn from either the rewarded correct selections or from the punished incorrect selections.  In other words, only one output yields information about the task space, while the other one provides no information whatsoever.  This is a much harder problem to learn, one that is frequently overlooked in such models.
+
+
+\subsection{The reservoir does not behave like a reservoir.}
 Irreproducibility of results.
 Lack of reservoir memory.
 
@@ -79,6 +113,8 @@ Output: a scalar or vector representing the context function
 4. Concrete research directions to explore
 
 \section{References}
+
+Konda, V. R., \& Tsitsiklis, J. N. (2000). Actor-critic algorithms. In Advances in neural information processing systems (pp. 1008-1014).
 
 Groman, S. M., Keistler, C., Keip, A. J., Hammarlund, E., DiLeone, R. J., Pittenger, C., ... \& Taylor, J. R. (2019). Orbitofrontal Circuits Control Multiple Reinforcement-Learning Processes. Neuron.
 
