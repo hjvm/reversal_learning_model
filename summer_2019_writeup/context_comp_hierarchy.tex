@@ -1,4 +1,14 @@
-\documentclass[]{article}
+\documentclass[11pt]{article}
+	\usepackage{subfiles}
+	\usepackage{graphicx}
+	\usepackage{xcolor}
+	\usepackage{hyperref}
+	\hypersetup{
+		colorlinks,
+		linkcolor={red!50!black},
+		citecolor={blue!50!black},
+		urlcolor={blue!80!black}
+		}
 
 %opening
 \title{What a Mouse can teach Computer Science: \\
@@ -17,7 +27,7 @@ I have taken steps toward this goal by identifying the computational constraints
 
 
 \section{Vision}
-In order to learn context-dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  These constitute the basis of the Context Computability Hierarchy.  By the end of this paper, you will have an in depth understanding of what each of these levels is, the computational and biological constraints positing them, their interactions and how this framework can be applied to reinforcement learning.
+In order to learn context-dependent policies that translate states into actions, one must first partition the task space acquisition problem into 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  These constitute the basis of the Context Grounding Hierarchy.  By the end of this paper, you will have an in depth understanding of what each of these levels is, the computational and biological constraints positing them, their interactions and how this framework can be applied to reinforcement learning.
 
 \subsection{Mice demonstrate computational constraints.}
 
@@ -31,10 +41,10 @@ Experimental observations hint at a distributed computation of positive and nega
 
 
 \section{Steps}
-I will now explicitly define the Context Computability Hierarchy as currently illustrated by its biological constraints and address its overlap with current Actor-Critic methods in Reinforcement Learning.
+I will now explicitly define the Context Grounding Hierarchy as currently illustrated by its biological constraints and address its overlap with current Actor-Critic methods in Reinforcement Learning.
 
-\subsection{The Context Computability Hierarchy.}
-The Context Computability Hierarchy consist of 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  Here, I describe a clearer picture of what each level entails, as well as its interactions with the other 2 levels.
+\subsection{The Context Grounding Hierarchy.}
+The Context Grounding Hierarchy consist of 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  Here, I describe a clearer picture of what each level entails, as well as its interactions with the other 2 levels.
 
 \subsubsection{The Reaction Level maps sensory input to an output action.}
 The Reaction Level encompasses the direct input to output mapping.  Its simplest description is a rudimentary set of weights that map a given input to a specific output.  When no learning has occurred, this mapping can be entirely random, however, upon receiving positive and negative signals from the Evaluation Level $y_{true}$, the weights connecting the input directly to the produced output will either be strengthened or weakened according to the feedback.
@@ -57,47 +67,54 @@ A change of context would be interpreted as a rotation of the input-output axes 
 
 The typical Actor-Critic architecture in Reinforcement Learning is composed of an Actor which is mainly defined as the Reaction Level, and a Critic which encompasses the functions of the Evaluation and Expectation Level.  In traditional Actor-Critic architectures that rely on a probability distribution, usually as a softmax, as an intentioned choice model, the probability for each potential output is taken as the expectation $E[r]$ of the model.  The Critic then performs some variation of Temporal Displacement (TD) learning in the weight update rule with an $(r - E[r]])$ term.  
 
-The Context Computability Hierarchy separates the computation of expectation from that of the final output action.  Instead, the expectation is handled in the Evaluation Layer as a progressive accumulation of the full reward information according to a certain discount factor, while the probabilistic precursor to action selection in the Reaction Level is considered the confidence behind the action.  Having a weight plasticity rule that takes into account this confidence $c$ such as $(y_{true} - c)$ would allow the learning to saturate and control the magnitude of the input-output weights without the need to normalize them.
+The Context Grounding Hierarchy separates the computation of expectation from that of the final output action.  Instead, the expectation is handled in the Evaluation Layer as a progressive accumulation of the full reward information according to a certain discount factor, while the probabilistic precursor to action selection in the Reaction Level is considered the confidence behind the action.  Having a weight plasticity rule that takes into account this confidence $c$ such as $(y_{true} - c)$ would allow the learning to saturate and control the magnitude of the input-output weights without the need to normalize them.
 
 \section{News}
-I will now discuss my progress to date with the current state of the art model of the Orbitofrontal Cortex (OFC) (Zhang, et. al, 2018).  I will compare my own findings and discuss limitations in light of the Context Computability Hierarchy.
+I will now discuss my progress to date with the current state of the art model of the Orbitofrontal Cortex (OFC) (Zhang, et. al, 2018).  I will compare my own findings and discuss limitations in light of the Context Grounding Hierarchy.
 
-\subsection{The OFC as the sole driver of reversal learning.}
-At the time of writing, the most recent publication attempting to model the mice tactile discrimination reversal learning task was by Zhang, et. al, who presented a reservoir neural network model of the OFC.  In their paper, they described a reservoir which received as input a texture represented by a 2-dimensional binary vector, and a binary reward variable which represented the reward earned in the previous trial.  The network output consisted of two nodes, representing two possible actions.  In each trial, one of the two nodes would be selected and set to 1, while the other was set to 0.  This represented the choice between licking and not licking, or go vs. no-go.  The only plastic weights in the entire network were the output weights, which constitute a linear readout of the output of the reservoir.
+\subsection{A reservoir neural network may model the OFC.}
+At the time of writing, a recent publication attempting to model the mice tactile discrimination reversal learning task was by Zhang, et. al, who presented a reservoir neural network model of the OFC (\autoref{fig:1a}).  In their paper, they described a reservoir which received as input a texture represented by a 2-dimensional binary vector, and a binary reward variable which represented the reward earned in the previous trial.  The network output consisted of two nodes, representing two possible actions.  In each trial, one of the two nodes would be selected and set to 1, while the other was set to 0.  This represented the choice between licking and not licking, or go vs. no-go.  The only plastic weights in the entire network were the output weights, which constitute a linear readout of the output of the reservoir.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.25]{./zhang_reservoir_architecture.PNG}
+	\caption{A diagram of Zhang et. al's reservoir neural network model of the orbitofrontal cortext (OFC).}
+	\label{fig:1a}
+\end{figure}
 
 According to their findings, the reservoir network was able to learn the initial contingency, but upon reversal would first need time to forget the first learned set of weights in the output layer, making the reversal learning phase slower.  It was not until they included the reward from the previous trial into the input of the reservoir that they were able to achieve a faster reversal learning phase.  Moreover, each subsequent reversal of the texture-reward contingency was learned even faster than the previous one.  Much like the mice, they argued, the reservoir network model learned an initial task structure and later became adept at simply switching the contingency without forgetting the previously learned rewarded rule.
 
-\subsection{The model does not capture the 3 levels.}
+\subsection{The Context Grounding Hierarchy explains limitations.}
 According to the paper published by Zhang et. al, the output of the model is calculated by taking a softmax of both output nodes connected to the reservoir.  The probabilities obtained from this function are then considered the expected rewards $E[r_k]$ of each function.  The plasticity equation  then uses this term in a TD-style term: $(r - E[r_k]))$.  It is not mentioned how the reservoir is able to reverse the learned contingency, aside from it being computed abstractly in the temporal dynamics of the pooled neurons.
 
 I have implemented the network as described in their paper in iPython notebooks (see Supplementary Materials) using all the provided hyperparameters and an identical trial structure.  I have not yet been able to replicate the results presented in the paper.  Instead, I have discovered the following behaviors:
 - Inclusion of the reward from the previous trial hinders learning.  Without knowing the action associated to a previous reward, including it as an input does not offer any further information regarding the task structure, and only serves to make the input noisier.
 - Reversals are slower than the initial learning, both with and without the old reward input.  Because the weights are normalized upon initialization and with every update, the initial weights do not cause the initial learning to be any slower than later reversals.  The model is actively forgetting the previous set of weights and learning a new one.
 
-Without explicitly separating the learning task into the discrete functions proposed by the Context Computability Hierarchy, it is impossible to achieve the context switching observed to cause reversal learning to be much faster than the initial phase.
+Without explicitly separating the learning task into the discrete functions proposed by the Context Grounding Hierarchy, it is impossible to achieve the context switching observed to cause reversal learning to be much faster than the initial phase.
 
-\subsection{The reservoir does not behave like a reservoir.}
-A closer inspection into the irreproducibility of the paper's results revealed that the reservoir, as described by Zhang, et. al, did not benefit from any of the recursive temporal dynamics that are attributed to this particular architecture's success.  The decay in response of the neurons in the reservoir layer is characterized by $\frac{x_0}{e}$ every 100ms ($\tau=0.1, dt=0.001$).  Because the decision and reward are applied 200ms after the removal of the input texture in the experimental setup, the original input signal has only decayed by a factor of $\frac{x_0}{e^2}$ by the time the weight update occurs.  This decay is slow enough for a trace of the input to still be present in the reservoir's neurons and for the feedback dynamics to remain negligible.  Consequently, the behavior exhibited by the reservoir neural network described in the paper is that of a simple, one layer neural network learning a set of weights from input to output (See Supplementary Notes).
+\subsection{The reservoir does not benefit from its recursion.}
+A closer inspection into the irreproducibility of the paper's results revealed that the reservoir, as described by Zhang, et. al, did not benefit from any of the recursive temporal dynamics that are attributed to this particular architecture's success.  The decay in response of the neurons in the reservoir layer is characterized by $\frac{x_0}{e}$ every 100ms ($\tau=0.1, dt=0.001$).  Because the decision and reward are applied 200ms after the removal of the input texture in the experimental setup, the original input signal has only decayed by a factor of $\frac{x_0}{e^2}$ by the time the weight update occurs.  This decay is slow enough for the input to still be the dominant activation in the reservoir's neurons and for the feedback dynamics to remain negligible.  Consequently, the behavior exhibited by the reservoir neural network described in the paper simulates that of a simple, one layer neural network learning a set of weights from input to output (See Supplementary Notes).
 
 
 
 \section{Future work}
-After detailing the Context Computability Hierarchy and my current work grounding this framework, I will now highlight several key research directions and projects that must be followed in order to fully prove the effectiveness of this approach to solving the context-dependent learning problem.  Some of them I have already started and are either included as supplementary materials to this paper or are available upon request.
+After detailing the Context Grounding Hierarchy and my current work affirming this framework, I will now highlight several key research directions and projects that must be followed in order to fully prove the effectiveness of this approach to solving the context-dependent learning problem.  Some of them I have already started and are either included as supplementary materials to this paper or are available upon request.
 
-\subsection{Why does the original code work?}
-The findings that I have reported in this paper have all been made through my own codebase.  Even though it is based on the Zhang, et. al paper, it does not fully explain why they were able to achieve faster reversal learning results, especially conditioned on providing the reservoir model with the reward information from the previous trial.
+\subsection{The published results must still be explained.}
+The findings that I have reported in this paper have all been made through my own codebase.  Even though it is based on the Zhang, et. al paper, it does not fully explain why the authors were able to achieve faster reversal learning results, especially conditioned on providing the reservoir model with the reward information from the previous trial.
 
 In order to fully explain the discrepancies, it will be necessary to inspect their codebase in depth and compare it to the published material.  I have provided one such example of this type of investigation: the current learning rule published in the paper causes my model in python to learn a set of weights opposite to the contingency, driving its accuracy to zero directly.  After searching for the learning and output rules implemented in the code, I found that the output equation published in the paper is different from the one used in the code itself.
 
 The final concrete direction such a project can follow is to replicate the results I have observed in my python code with their MATLAB codebase.  The code that was provided by the authors does not run; however, I have forked their repository and have been updating it to run on most computers and MATLAB versions.  At the time of writing, this is still a work in progress; my repository is available upon request regardless.
 
-\subsection{Reservoir networks with dynamical memory.}
+\subsection{A reservoir network with memory will behave differently.}
 As mentioned in *The reservoir does not behave like a reservoir*, the hyperparamters proposed by Zhang et. al fail to elicit the reservoir computing dynamics from the model.  I have implemented a simpler, single layer neural network using a similar hyperparametrization and update equation to demonstrate that the underlying behavior of a reservoir is that of a Reaction Level model (See Supplementary Materials).
 
 It is now necessary to mathematically derive and implement a reservoir neural network with parameters that allow it to have a working memory through the dynamical activity of the network instead of the individual neuronal activations themselves.  Ideally, these parameters should be as similar to the original as possible.  The model should then be tested in the same experimental setup in order to observe changes in performance from the baseline.
 
-\subsection{One must be greedy to be on The Expectation Level.}
-The currently published experimental setup attempts to mix all levels of the Context Computability Hierarchy.  After finding a full set of parameters to make use of the recursive dynamics of the reservoir, it will be necessary to separate the model into a more traditional Actor-Critic setup by splitting the Reaction Level from the Evaluation and Expectation Level.
+\subsection{Use multiple models to span the Context Grounding Hierarchy.}
+The currently published experimental setup attempts to mix all levels of the Context Grounding Hierarchy.  After finding a full set of parameters to make use of the recursive dynamics of the reservoir, it will be necessary to separate the model into a more traditional Actor-Critic setup by splitting the Reaction Level from the Evaluation and Expectation Level.
 
 In order to achieve this split, it will suffice to implement a simple neural network for the Reaction Level as I have (See Supplementary Materials).  But to fully mix the Evaluation and Expectation level, it will be necessary to provide the reservoir with a full account of what the Reaction Level has produced, as well as the original input, the reward received and the expectation developed by the model.  I suspect this may improve the initial learning, but will not provide the fast context switch seen in the reversal phase until the model is further separated into the corresponding 3 levels.  This would be yet another step further.
 
@@ -112,11 +129,11 @@ The main issue lies in the fact that mice do not receive feedback for one out of
 The second divergence is in the interpretation of the mouse's initial go/no-go behavior.  Generally, neural networks are initialized with a random set of weights, which should be equally likely to produce either go or no-go.  However, mice in these experiments are dehydrated, and their initial, naive behavior is to always lick in search of water.  In reality, the default behavior is to go, and then the no-go response must afterwards be learned.  This could be more accurately interpreted as a neural network with only a single output: whenever this output reaches a threshold, the model has chosen to go; otherwise, it has actively rejected the input.  I have also begun this exploration and included it in the Supplementary Materials.
 
 \section{Contributions}
-In this paper, I have outlined the Context Computability Hierarchy in light of the biological constraints discovered through the tactile-discrimination task performed on rodents.  I have also compared it to current Actor-Critic approaches to this Reinforcement Learning problem and highlighted its advantages.  I have thus proposed a new approach to the context-dependent learning problem when the number of contexts is unknown beforehand.
+In this paper, I have outlined the Context Grounding Hierarchy in light of the biological constraints discovered through the tactile-discrimination task performed on rodents.  I have also compared it to current Actor-Critic approaches to this Reinforcement Learning problem and highlighted its advantages.  I have thus proposed a new approach to the context-dependent learning problem when the number of contexts is unknown beforehand.
 
-With my current work, I have uncovered the limitations of the state of the art in reversal learning models  I have also provided multiple concrete research projects and the necessary codebases in order to further affirm the Context Computability Hierarchy and fully take the state of the art to the next level.
+With my current work, I have uncovered the limitations of the state of the art in reversal learning models  I have also provided multiple concrete research projects and the necessary codebases in order to further affirm the Context Grounding Hierarchy and fully take the state of the art to the next level.
 
-Now as you finish this article, you understand the theoretical basis of the Context Computability Hierarchy, its divergence from traditional Actor-Critic approaches and are empowered, with this understanding and provided code, to continue this research and produce seminal contributions to our computational account of biological learning.
+Now as you finish this article, you understand the theoretical basis of the Context Grounding Hierarchy, its divergence from traditional Actor-Critic approaches and are empowered, with this understanding and provided code, to continue this research and produce seminal contributions to our computational account of biological learning.
 
 \newpage
 \section{Acknowledgements}
@@ -134,9 +151,9 @@ Helmchen, F., Gilad, A., \& Chen, J. L. (2018). Neocortical dynamics during whis
 Zhang, Z., Cheng, Z., Lin, Z., Nie, C., \& Yang, T. (2018). A neural network model for the orbitofrontal cortex and task space acquisition during reinforcement learning. PLoS computational biology, 14(1), e1005925.
 
 
-
 \end{document}
 
-\include{./supp_materials/supplementary1/ofc_reservoir_paper_reimplementation}
-\include{./supp_materials/supplementary2/single_layer_feedforward_network}
-\include{./supp_materials/supplementary3/reservoir_network_go_nogo}
+
+\input{./supp_materials/supplementary1/ofc_reservoir_paper_reimplementation}
+\input{./supp_materials/supplementary2/single_layer_feedforward_network}
+\input{./supp_materials/supplementary3/reservoir_network_go_nogo}
