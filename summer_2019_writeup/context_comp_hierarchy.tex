@@ -2,8 +2,7 @@
 
 %opening
 \title{The Context Computability Hierarchy}
-\author{H\'ector J. V\'azquez Mart\'inez, Aleksej Fomins,\\
-	 Dr. Abhishek Banerjee, Prof. Fritjof Helmchen}
+\author{H\'ector J. V\'azquez Mart\'inez}
 
 \begin{document}
 
@@ -19,9 +18,9 @@ In order to learn context-dependent policies that translate states into actions,
 
 \subsection{Mice demonstrate computational constraints.}
 
-The tactile discrimination experiment consists of stochastically presenting 2 different types of sandpaper (P100 and P1200) to head-restrained mice.  These must, in turn, use their whiskers to explore and learn to recognize each of these textures individually.  One of the two textures is positively rewarded, while the other one is punished.  Mice are administered this reward or punishment when they lick a water spout upon presentation of the corresponding texture; which is considered active selection.  On the other hand, when mice withhold from licking, they reject the presented texture, but do not receive any sort of feedback from the experimental setup.  Once mice achieve a near perfect performance, the contingency of positively- and negatively-rewarded textures is flipped, starting the reversal learning portion of the experiment.
+The tactile discrimination experiment involves stochastically presenting 2 different types of sandpaper (P100 and P1200) to head-restrained mice.  They must, in turn, use their whiskers to explore and learn to recognize each of these textures individually.  A specified time after each texture has been presented and removed, the mice must choose whether to select or reject the presented texture by either licking a water spout, or actively withholding from it.  Each combination of texture and active selection is associated with either a reward or punishment.  On the other hand, when mice withhold from licking, they reject the presented texture, but do not receive any sort of feedback from the experimental setup.  Once mice achieve expert level performance (90\%), the contingency of positively- and negatively-rewarded combinations of texture and licking are flipped, starting the reversal learning portion of the experiment.
 
-It has been shown through the tactile discrimination experiment that mice store representations of touching, whisking and licking in different neocortical regions.  The most prominent of these cortico-cortico interactions is between the primary (S1) and secondary (S2) somatosensory areas and the vibrissae motor cortex (M1) (F. Helmchen et. al, 2018).  Mice who have been afflicted with lesions to the orbitorfrontal cortex exhibit very similar performance to healthy mice in the initial learning phase of the experiment.  These three regions therefore seem necessary and sufficient for the basic initial learning of the tactile discrimination task, supporting the Reaction Level of the Context Hierarchy.
+Through the tactile discrimination experiment, intermingled representations of touching, whisking and licking have been found between the primary (S1) and secondary (S2) somatosensory areas and the vibrissae motor cortex (M1).  These representations were also observed to (F. Helmchen et. al, 2018).  Mice who have been afflicted with lesions to the orbitorfrontal cortex exhibit very similar performance to healthy mice in the initial learning phase of the experiment.  These three regions therefore seem necessary and sufficient for the basic initial learning of the tactile discrimination task, supporting the Reaction Level of the Context Hierarchy.
 
 The remaining two levels are managed by a distributed computation of positive and negative reward values and their stabilization in the form of expectation.  The Evaluation Level is where the positive and negative feedback of the Reaction Level is processed.  This level is composed of two neural circuits: the projections from the OFC to the Nucleus Accumbens, which evaluate negative outcomes, and the Amygdala's projections to the OFC, which evaluate positive outcomes.  Finally, the circuit from the OFC to the Amygdala stabilizes the learned action values from the other two circuits (SM Groman, et. at, 2019).  This is the function of the Expectation Layer and its interaction with the Evaluation Layer.
 
@@ -117,6 +116,9 @@ With my current work, I have uncovered the limitations of the state of the art i
 Now as you finish this article, you understand the theoretical basis of the Context Computability Hierarchy, its divergence from traditional Actor-Critic approaches and are empowered, with this understanding and provided code, to continue this research and produce seminal contributions to our computational account of biological learning.
 
 \newpage
+\section{Acknowledgements}
+
+Here, I express my gratitude to Aleksej Fomins, who collaborated with me the majority of the summer and provided the mathematical insight needed to explore the reservoir neural network paper and determine concrete research directions to follow.  I am equally grateful to Dr. Abhishek Banerjee, who extended to me the opportunity to come to the Laboratory of Neural Circuit Dynamics and entrusted me the challenge of modeling his work with the tactile discrimination reversal learning experiment.  My thanks to Prof. Fritjof Helmchen, who in spite of my short stay in his lab, welcomed me to collaborate with his PhD students and supervised my progress throughout the summer.
 
 \section{References}
 
