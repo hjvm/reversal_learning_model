@@ -1,7 +1,8 @@
 \documentclass[]{article}
 
 %opening
-\title{The Context Computability Hierarchy}
+\title{What a Mouse can teach Computer Science: \\
+	A computational account of reversal learning.}
 \author{H\'ector J. V\'azquez Mart\'inez}
 
 \begin{document}
@@ -9,7 +10,9 @@
 \maketitle
 
 \begin{abstract}
-The context of a task is a function that maps the task space to a 3-dimensional surface of rewards (hills) and punishments (valleys).  At the time of writing, there is no flawless method to compute this function without predetermining a discrete number of contexts for a given task.  In order to approximate this function when the number of potential contexts is unknown, it is necessary to leverage reward prediction errors and fulfillment of expectation developed as a third layer to the basic task acquisition.  I have taken steps towards this end by identifying the computational constraints behind the calculation of context functions, summarized as the Context Computability Hierarchy, and proposing a theoretical framework to detect changes in context.  I have grounded this approach by taking the state of the art reservoir model of the Orbitofrontal Cortex (OFC) -- responsible for context switching in reversal learning, tactile discrimination tasks -- and explaining its current deficiencies through the Context Computability Hierarchy.  Finally, I propose multiple in-depth research directions that will fully confirm this principle and provide a novel approach to the learning of context-dependent policies in an unknown task space.
+I propose a computational account of the tactile discrimination reversal learning task, named the Context Grounding Hierarchy, and propose to use it to both characterize and explain the learning behavior exhibited by mice.
+In order to bridge the gap between the biological learning observed in mice and reinforcement learning, it is necessary to establish a computational account of learning that observes the biological and computational constraints exhibited by the mouse brain and proposes a series of principles to design further reinforcement learning models.
+I have taken steps toward this goal by identifying the computational constraints exhibited by mice and summarizing them in the Context Grounding Hierarchy.  I then affirm the effectiveness of the Context Grounding Hierarchy by using it to explain discrepancies between the performance of state of the art reinforcement learning models trained to perform reversal learning and the performance of mice.  Finally, I propose multiple in-depth research directions necessary to confirm this principle and provide a novel approach to account for changes in context and its  calculation into the framework of reinforcement learning.
 \end{abstract}
 
 
@@ -20,11 +23,11 @@ In order to learn context-dependent policies that translate states into actions,
 
 The tactile discrimination experiment involves stochastically presenting 2 different types of sandpaper (P100 and P1200) to head-restrained mice.  They must, in turn, use their whiskers to explore and learn to recognize each of these textures individually.  A specified time after each texture has been presented and removed, the mice must choose whether to select or reject the presented texture by either licking a water spout, or actively withholding from it.  Each combination of texture and active selection is associated with either a reward or punishment.  On the other hand, when mice withhold from licking, they reject the presented texture, but do not receive any sort of feedback from the experimental setup.  Once mice achieve expert level performance (90\%), the contingency of positively- and negatively-rewarded combinations of texture and licking are flipped, starting the reversal learning portion of the experiment.
 
-Through the tactile discrimination experiment, intermingled representations of touching, whisking and licking have been found between the primary (S1) and secondary (S2) somatosensory areas and the vibrissae motor cortex (M1).  These representations were also observed to (F. Helmchen et. al, 2018).  Mice who have been afflicted with lesions to the orbitorfrontal cortex exhibit very similar performance to healthy mice in the initial learning phase of the experiment.  These three regions therefore seem necessary and sufficient for the basic initial learning of the tactile discrimination task, supporting the Reaction Level of the Context Hierarchy.
+Through the tactile discrimination experiment, intermingled representations of touching, whisking and licking have been found between the primary (S1) and secondary (S2) somatosensory areas and the vibrissae motor cortex (M1).  These representations were also observed to partially reorganize as the discrimination task was learned (F. Helmchen et. al, 2018).  It may be argued that the naive learning phase is mostly supported by these cortico-cortical interactions, allowing the mice to map a sensory input to the desired output.
 
-The remaining two levels are managed by a distributed computation of positive and negative reward values and their stabilization in the form of expectation.  The Evaluation Level is where the positive and negative feedback of the Reaction Level is processed.  This level is composed of two neural circuits: the projections from the OFC to the Nucleus Accumbens, which evaluate negative outcomes, and the Amygdala's projections to the OFC, which evaluate positive outcomes.  Finally, the circuit from the OFC to the Amygdala stabilizes the learned action values from the other two circuits (SM Groman, et. at, 2019).  This is the function of the Expectation Layer and its interaction with the Evaluation Layer.
+Once the mice have reached expert level performance, the reversal of the texture to output contingency must then be managed by a higher order cognitive structure that will not simply forget the initially learned rule.  Mice who have been afflicted with lesions to the orbitorfrontal cortex (OFC) exhibit very similar performance to healthy mice in the initial learning phase of the experiment, but then are much slower to reacquire expert level performance after the contingency has been flipped.  For this reason, it is hypothesized that this higher level task is managed by the OFC, which encodes the task state space via many aspects of task information, including reward value, probability, risk, information value, abstract rules, and strategies (Zhang, et. al, 2018).  However, even thought the OFC has been made one of the direct drivers of learning by computing reward prediction errors directly, it has been demonstrated that neurons in the OFC signal reward prediction, not reward prediction errors (Stalnaker, et. al, 2018).
 
-It was previously thought that the OFC was mostly responsible for faster learning in the reversal phase of the tactile discrimination task by computing reward prediction errors; however, It has been demonstrated that neurons in the OFC signal reward prediction, not reward prediction errors (Stalnaker, et. al, 2018).  The reward prediction error is the main cause of faster learning after the contingencies of the textures have been reversed.  Groman et. al's circuit characterization of the OFC's role and the Context Hierarchy both set a limit on the computations that are required of the OFC.
+Experimental observations hint at a distributed computation of positive and negative reward values for each input-output pair, as well as their stabilization in memory as attractor peaks.  Projections from the OFC to the Nucleus Accumbens evaluate negative outcomes of actions, while the Amygdala's projections to the OFC evaluate positively rewarded actions.  Finally, the circuit from the OFC to the Amygdala stabilizes the learned action values from the other two circuits (SM Groman, et. at, 2019).
 
 
 \section{Steps}
@@ -33,19 +36,19 @@ I will now explicitly define the Context Computability Hierarchy as currently il
 \subsection{The Context Computability Hierarchy.}
 The Context Computability Hierarchy consist of 3 levels: The Reaction Level, The Evaluation Level and The Expectation Level.  Here, I describe a clearer picture of what each level entails, as well as its interactions with the other 2 levels.
 
-\subsubsection{The Reaction Level}
+\subsubsection{The Reaction Level maps sensory input to an output action.}
 The Reaction Level encompasses the direct input to output mapping.  Its simplest description is a rudimentary set of weights that map a given input to a specific output.  When no learning has occurred, this mapping can be entirely random, however, upon receiving positive and negative signals from the Evaluation Level $y_{true}$, the weights connecting the input directly to the produced output will either be strengthened or weakened according to the feedback.
 
 The Reaction Level interacts with the higher 2 levels by providing the input and output pair that was determined for any given iteration.
 
-\subsubsection{The Evaluation Level}
+\subsubsection{The Evaluation Level attributes value to each input-output response.}
 The Evaluation Level is responsible for handling the administered rewards and punishments.  In this layer, the reward or punishment signal is received, as well as the input and chosen action pair $(I, A)$ from the Reaction Level.  According to a certain learning rate, the input-output pairs provided by the Reaction Level will slowly build either a positive or negative value according to the task at hand.
 
 A common issue is that such feedback signals are typically not a binary 1 or -1, but instead span a continuous spectrum which varies by how much reward or punishment was administered, how strong it was and how much it was needed or desired.  For example, a dehydrated mouse in the tactile discrimination experiment will highly value any water droplets administered as reward through the water spout when it chooses the right texture.  Typically, such a reward is modeled as $r = 1$.  In contrast, an unpleasant sound played when the mouse chooses the incorrect texture will equate either $r = 0$ or $r = -1$ in most current weight update equations.  It is incorrect to equate the magnitude of both when updating weights, even when the learning rates for positive and negative updates are different, because much needed water and an unpleasant sound are fundamentally perceived very differently.
 
 The Evaluation Level allows the abstraction of this entire spectrum away from the hierarchy by providing only binary feedback signals $y_true$ to the other levels.  This means the Reaction Level is not concerned with reward, and only concerned with the correct input to output mapping.  The Evaluation level provides, in addition, the predicted reward $R_{pred}$ to the Expectation Level, which is the value currently assigned to the most recently seen input-output pair $(I, A)$.
 
-\subsubsection{The Expectation Level}
+\subsubsection{The Expectation Level uses surprises to remap the input-output-value function.}
 The Expectation Level then receives a function mapping input-output pairs to a predicted reward value $f(I, A) = R_{pred}$, as well as the feedback signal $y_{true}$ which would indicate whether the predicted value is correct or not.  The function $f(-)$ received by the Expectation Layer creates a 3-dimensional surface plot of input-action combinations and their associated values, while the $y_{true}$ signal indicates whether the current surface map is an accurate description of the task space.
 
 A change of context would be interpreted as a rotation of the input-output axes over which the $f(-)$ function is defined. 
